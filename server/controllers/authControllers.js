@@ -80,3 +80,37 @@ export const accountActivation = catchAsyncErrors(async (req, res, next) => {
     message: "Signup success. Please signin.",
   });
 });
+
+export const signin = catchAsyncErrors(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  let user = await User.findOne({ email });
+  if (!user) {
+    return next(
+      new ErrorHandler(
+        400,
+        "User with that email does not exist. Please signup."
+      )
+    );
+  }
+
+  if (!user.authenticate(password)) {
+    return next(new ErrorHandler(400, "Invalid email or password"));
+  }
+
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE,
+  });
+
+  const { _id, name, role } = user;
+
+  res.json({
+    token,
+    user: {
+      _id,
+      name,
+      role,
+      email: user.email,
+    },
+  });
+});
