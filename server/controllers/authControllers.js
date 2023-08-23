@@ -25,7 +25,7 @@ export const signup = catchAsyncErrors(async (req, res, next) => {
 
   const user = await User.findOne({ email });
   if (user) {
-    return next(new ErrorHandler(400, "Email is taken"));
+    return next(new ErrorHandler(400, "This email is taken"));
   }
 
   const token = jwt.sign(
@@ -52,5 +52,31 @@ export const signup = catchAsyncErrors(async (req, res, next) => {
 
   res.json({
     message: `Email has been sent to your email. Follow the instruction to activate your account`,
+  });
+});
+
+export const accountActivation = catchAsyncErrors(async (req, res, next) => {
+  const { token } = req.body;
+  if (!token) {
+    return next(new ErrorHandler(401, "Invalid token. Signup again."));
+  }
+
+  const decodedData = jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION);
+  const { name, email, password } = decodedData;
+
+  let user = await User.findOne({ email });
+  if (user) {
+    return next(new ErrorHandler(400, "This email is taken. Signup again."));
+  }
+
+  user = await User.create({ name, email, password });
+  if (!user) {
+    return next(
+      new ErrorHandler(401, "Error saving user in database. Try signup again")
+    );
+  }
+
+  res.status(201).json({
+    message: "Signup success. Please signin.",
   });
 });
