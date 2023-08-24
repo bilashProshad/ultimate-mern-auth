@@ -51,7 +51,7 @@ export const signup = catchAsyncErrors(async (req, res, next) => {
   console.log(`Message sent: ${info.response}`);
 
   res.json({
-    message: `Email has been sent to your email. Follow the instruction to activate your account`,
+    message: `Email has been sent to ${email}. Follow the instruction to activate your account`,
   });
 });
 
