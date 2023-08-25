@@ -33,11 +33,18 @@ const Layout = ({ children }) => {
           </li>
         </>
       )}
-      {isAuth() && (
+      {isAuth() && isAuth().role === "admin" && (
         <li className="nav-item">
-          <span style={{ cursor: "pointer" }} className="nav-link text-light">
+          <Link to="/admin" className={`nav-link ${isActive("/signup")}`}>
             {isAuth().name}
-          </span>
+          </Link>
+        </li>
+      )}
+      {isAuth() && isAuth().role === "subscriber" && (
+        <li className="nav-item">
+          <Link to="/private" className={`nav-link ${isActive("/signup")}`}>
+            {isAuth().name}
+          </Link>
         </li>
       )}
       {isAuth() && (

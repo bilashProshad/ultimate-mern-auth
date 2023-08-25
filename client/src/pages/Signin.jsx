@@ -3,7 +3,7 @@ import Layout from "../components/Layout";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import { authenticate, isAuth } from "../utils/helpers";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Signin = () => {
   const [values, setValues] = useState({
@@ -13,6 +13,8 @@ const Signin = () => {
   });
 
   const { email, password, buttonText } = values;
+
+  const navigate = useNavigate();
 
   const handleChange = (name) => (e) => {
     setValues({ ...values, [name]: e.target.value });
@@ -36,6 +38,10 @@ const Signin = () => {
           buttonText: "Submited",
         });
         toast.success(`Hey ${data.user.name}, Welcome back!`);
+
+        isAuth() && isAuth().role === "admin"
+          ? navigate("/admin")
+          : navigate("/private");
       });
     } catch (error) {
       console.log("SIGNIN ERROR!!!", error.response.data);
