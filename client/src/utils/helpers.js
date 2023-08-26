@@ -67,3 +67,10 @@ export const signout = (next) => {
   removeLocalStorage("user");
   next();
 };
+
+export const updateUser = (data, next) => {
+  if (typeof window !== "undefined") {
+    setLocalStorage("user", data.user);
+  }
+  next();
+};
