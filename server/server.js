@@ -5,6 +5,8 @@ import cors from "cors";
 import { connectDatabase } from "./config/database.js";
 import { authRoutes } from "./routes/authRoutes.js";
 import { errorMiddleware } from "./middlewares/errorMiddleware.js";
+import { userRoutes } from "./routes/userRoutes.js";
+import { adminRoutes } from "./routes/adminRoutes.js";
 
 const app = express();
 
@@ -18,6 +20,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1", authRoutes);
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/admin", adminRoutes);
 
 app.use(errorMiddleware);
 
