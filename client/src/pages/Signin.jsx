@@ -3,7 +3,7 @@ import Layout from "../components/Layout";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import { authenticate, isAuth } from "../utils/helpers";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 const Signin = () => {
   const [values, setValues] = useState({
@@ -89,6 +89,13 @@ const Signin = () => {
         {isAuth() ? <Navigate to={"/"} /> : ""}
         <h1 className="pt-5 pb-2 text-center">Signin</h1>
         {signupForm}
+        <br />
+        <Link
+          to={"/auth/password/forgot"}
+          className="btn btn-sm btn-outline-danger"
+        >
+          Forgot Password
+        </Link>
       </div>
     </Layout>
   );

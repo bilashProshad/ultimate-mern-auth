@@ -7,6 +7,9 @@ import PrivateRoute from "./components/PrivateRoute";
 import Private from "./pages/Private";
 import AdminRoute from "./components/AdminRoute";
 import Admin from "./pages/Admin";
+import Forgot from "./pages/Forgot";
+import Reset from "./pages/Reset";
+import PublicRoute from "./components/PublicRoute";
 
 const App = () => {
   return (
@@ -16,6 +19,10 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/auth/activate/:token" element={<Activate />} />
+        <Route element={<PublicRoute />}>
+          <Route path="/auth/password/forgot" element={<Forgot />} />
+          <Route path="/auth/password/reset/:token" element={<Reset />} />
+        </Route>
         <Route element={<PrivateRoute />}>
           <Route path="/private" element={<Private />} />
         </Route>
