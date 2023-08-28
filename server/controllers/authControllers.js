@@ -3,6 +3,7 @@ import { User } from "../models/User.js";
 import { ErrorHandler } from "../utils/ErrorHandler.js";
 import jwt from "jsonwebtoken";
 import { sendActivationEmail } from "../utils/sendEmail.js";
+import { OAuth2Client } from "google-auth-library";
 
 export const signup = catchAsyncErrors(async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -160,4 +161,37 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
   res.json({
     message: "Great! Now you can login with your new password",
   });
+});
+
+const oAuth2Client = new OAuth2Client(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET
+);
+export const googleLogin = catchAsyncErrors(async (req, res, next) => {
+  const { credential } = req.body;
+
+  const ticket = await oAuth2Client.verifyIdToken({
+    idToken: credential,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+
+  const { email, name, email_verified } = ticket.getPayload();
+
+  if (!email_verified) {
+    return next(new ErrorHandler(400, "Google login failed. Try again!"));
+  }
+
+  let user = await User.findOne({ email });
+  if (!user) {
+    let password = email + process.env.JWT_SECRET;
+    user = await User.create({ email, name, password });
+  }
+
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE,
+  });
+
+  const { _id, role } = user;
+
+  res.send({ token, user: { _id, email, name, role } });
 });

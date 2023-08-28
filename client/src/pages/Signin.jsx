@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import { authenticate, isAuth } from "../utils/helpers";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import GoogleLoginBtn from "../components/GoogleLoginBtn";
 
 const Signin = () => {
   const [values, setValues] = useState({
@@ -18,6 +19,16 @@ const Signin = () => {
 
   const handleChange = (name) => (e) => {
     setValues({ ...values, [name]: e.target.value });
+  };
+
+  const informParent = (data) => {
+    authenticate(data, () => {
+      toast.success(`Hey ${data.user.name}, Welcome back!`);
+
+      isAuth() && isAuth().role === "admin"
+        ? navigate("/admin")
+        : navigate("/private");
+    });
   };
 
   const submitHandler = async (e) => {
@@ -88,6 +99,7 @@ const Signin = () => {
         <ToastContainer />
         {isAuth() ? <Navigate to={"/"} /> : ""}
         <h1 className="pt-5 pb-2 text-center">Signin</h1>
+        <GoogleLoginBtn informParent={informParent} />
         {signupForm}
         <br />
         <Link
