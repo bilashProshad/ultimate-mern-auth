@@ -4,6 +4,7 @@ import { ErrorHandler } from "../utils/ErrorHandler.js";
 import jwt from "jsonwebtoken";
 import { sendActivationEmail } from "../utils/sendEmail.js";
 import { OAuth2Client } from "google-auth-library";
+import fetch from "node-fetch";
 
 export const signup = catchAsyncErrors(async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -194,4 +195,19 @@ export const googleLogin = catchAsyncErrors(async (req, res, next) => {
   const { _id, role } = user;
 
   res.send({ token, user: { _id, email, name, role } });
+});
+
+export const facebookLogin = catchAsyncErrors(async (req, res, next) => {
+  const { userID, accessToken } = req.body;
+
+  // const url = `https://graph.facebook.com/v2.11/${userID}/?fields=id,name,email&access_token=${accessToken}`;
+
+  const url = `https://graph.facebook.com/me?access_token=${accessToken}`;
+  const response = await fetch(url);
+
+  const data = await response.json();
+
+  console.log(data);
+
+  res.send({ data });
 });

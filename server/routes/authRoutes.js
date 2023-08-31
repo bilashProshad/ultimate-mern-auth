@@ -1,6 +1,7 @@
 import express from "express";
 import {
   accountActivation,
+  facebookLogin,
   forgotPassword,
   googleLogin,
   resetPassword,
@@ -27,5 +28,6 @@ router
   .route("/password/reset")
   .put(resetPasswordValidator, runValidator, resetPassword);
 router.route("/google-login").post(googleLogin);
+router.route("/facebook-login").post(facebookLogin);
 
 export const authRoutes = router;
